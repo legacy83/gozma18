@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-export DEBIAN_FRONTEND=noninteractive
-
 # Install Composer
 if [[ ! -f "/usr/local/bin/composer" ]]; then
   curl -sS https://getcomposer.org/installer | php
