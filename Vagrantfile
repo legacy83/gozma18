@@ -8,7 +8,7 @@ Vagrant.configure("2") do |config|
         config.vm.provision 'shell', path: './vagrant/provision/provision-common.sh'
         config.vm.provision 'shell', path: './vagrant/provision/provision-webserver.sh'
         config.vm.provision 'shell', path: './vagrant/provision/provision-databases.sh'
-        # config.vm.provision 'shell', path: './vagrant/provision/provision-extras.sh'
+        config.vm.provision 'shell', path: './vagrant/provision/provision-extras.sh'
         config.vm.provision 'shell', path: './vagrant/provision/provision-cleanup.sh'
         # post-install message (vagrant console)
         config.vm.post_up_message = "App URL: http://gozma18.local"
