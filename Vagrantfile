@@ -5,9 +5,11 @@ Vagrant.configure("2") do |config|
         ubuntu18.vm.hostname = "gozma18"
         ubuntu18.vm.network "private_network", ip: "192.168.27.18"
         # provisioners
-        config.vm.provision 'shell', path: './vagrant/provision/once-as-root.sh'
-        config.vm.provision 'shell', path: './vagrant/provision/once-as-vagrant.sh', privileged: false
-        config.vm.provision 'shell', path: './vagrant/provision/always-as-root.sh', run: 'always'
+        config.vm.provision 'shell', path: './vagrant/provision/provision-common.sh'
+        # config.vm.provision 'shell', path: './vagrant/provision/provision-webserver.sh'
+        # config.vm.provision 'shell', path: './vagrant/provision/provision-databases.sh'
+        # config.vm.provision 'shell', path: './vagrant/provision/provision-extras.sh'
+        config.vm.provision 'shell', path: './vagrant/provision/provision-cleanup.sh'
         # post-install message (vagrant console)
         config.vm.post_up_message = "App URL: http://gozma18.local"
     end
