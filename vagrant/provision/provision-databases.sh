@@ -19,6 +19,11 @@ apt-get install -y \
   postgresql postgresql-contrib \
   sqlite3 libsqlite3-dev
 
+# Enalbe MySQL remote access
+if [[ ! -v is_mysql_installed ]]; then
+  sed -i '/^bind-address/s/bind-address.*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+fi
+
 # Create MySQL privileges
 if [[ ! -v is_mysql_installed ]]; then
   mysql --user="root" --password="root@secret" -e "CREATE USER 'gozma18'@'localhost' IDENTIFIED BY 'gozma18@secret';"

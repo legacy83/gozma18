@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
-# Install Composer
-if [[ ! -f "/usr/local/bin/composer" ]]; then
-  curl -sS https://getcomposer.org/installer | php
-  mv composer.phar /usr/local/bin/composer
-fi
-
 # Install Node
 apt-get install -y nodejs npm
 /usr/bin/npm install -g gulp-cli
 /usr/bin/npm install -g bower
 /usr/bin/npm install -g yarn
 /usr/bin/npm install -g grunt-cli
+
+# Install Composer
+if [[ ! -f "/usr/local/bin/composer" ]]; then
+  curl -sS https://getcomposer.org/installer | php
+  mv composer.phar /usr/local/bin/composer
+fi
 
 # Install wp-cli
 if [[ ! -f "/usr/local/bin/wp" ]]; then

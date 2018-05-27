@@ -10,5 +10,33 @@ apt-get install -y \
   php7.2-imap php7.2-mysql php7.2-mbstring \
   php7.2-xml php7.2-zip php7.2-bcmath php7.2-soap \
   php7.2-intl php7.2-readline php7.2-opcache \
-  php7.2-xmlrpc php7.2-imagick \
+  php7.2-xmlrpc php7.2-xsl php7.2-json \
+  php7.2-bz2 php7.2-imagick \
   php-xdebug php-pear
+
+# Configure Apache
+echo '<VirtualHost *:80>
+  ServerName gozma18.local
+  DocumentRoot /var/www/html
+  AllowEncodedSlashes On
+  <Directory /var/www/html>
+    Options +Indexes +FollowSymLinks
+  	DirectoryIndex index.php index.html
+  	Order allow,deny
+  	Allow from all
+  	AllowOverride All
+  </Directory>
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+a2enmod rewrite
+
+# Ownership under Vagrant user
+sed -ri 's/^(export APACHE_RUN_USER=)(.*)$/\1vagrant/' /etc/apache2/envvars
+sed -ri 's/^(export APACHE_RUN_GROUP=)(.*)$/\1vagrant/' /etc/apache2/envvars
+chown -R vagrant:vagrant /var/lock/apache2
+chown -R vagrant:vagrant /var/log/apache2
+chown -R vagrant:vagrant /var/www
+
+# Restart service
+service apache2 restart
