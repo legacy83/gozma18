@@ -31,12 +31,12 @@ echo '<VirtualHost *:80>
 </VirtualHost>' > /etc/apache2/sites-available/000-default.conf
 a2enmod rewrite
 
-# Ownership under Vagrant user
+# Run under Vagrant ownership
 sed -ri 's/^(export APACHE_RUN_USER=)(.*)$/\1vagrant/' /etc/apache2/envvars
 sed -ri 's/^(export APACHE_RUN_GROUP=)(.*)$/\1vagrant/' /etc/apache2/envvars
 chown -R vagrant:vagrant /var/lock/apache2
 chown -R vagrant:vagrant /var/log/apache2
-chown -R vagrant:vagrant /var/www
+chown -R vagrant:vagrant /var/wwws
 
 # Restart service
 service apache2 restart

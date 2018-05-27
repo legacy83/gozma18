@@ -22,6 +22,7 @@ apt-get install -y \
 # Enalbe MySQL remote access
 if [[ ! -v is_mysql_installed ]]; then
   sed -i '/^bind-address/s/bind-address.*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+  mysql --user="root" --password="root@secret" -e "GRANT ALL ON *.* TO root@'%' IDENTIFIED BY 'root@secret' WITH GRANT OPTION;"
 fi
 
 # Create MySQL privileges
@@ -36,6 +37,12 @@ fi
 if [[ ! -v is_mysql_installed ]]; then
   mysql --user="root" --password="root@secret" -e "CREATE DATABASE gozma18 character set UTF8mb4 collate utf8mb4_bin;"
   mysql --user="root" --password="root@secret" -e "CREATE DATABASE gozma18_test character set UTF8mb4 collate utf8mb4_bin;"
+fi
+
+# Enalbe PostgreSQL remote access
+if [[ ! -v is_postgresql_installed ]]; then
+  sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/10/main/postgresql.conf
+  echo "host    all             all             192.168.27.1/32         md5" | tee -a /etc/postgresql/10/main/pg_hba.conf
 fi
 
 # Create PostgreSQL privileges
