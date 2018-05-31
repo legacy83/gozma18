@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#== Variables ==
+#== Functionality ==
+#== Provisioning Script ==
+
 # Install Node
 apt-get install -y nodejs npm
 /usr/bin/npm install -g gulp-cli

@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#== Variables ==
+#== Functionality ==
+#== Provisioning Script ==
+
 # Install packages
 apt-get install -y \
   apache2 php7.2 \

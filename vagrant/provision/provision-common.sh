@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#== Variables ==
+#== Functionality ==
+#== Provisioning Script ==
+
 export DEBIAN_FRONTEND=noninteractive
 
 # Update packages

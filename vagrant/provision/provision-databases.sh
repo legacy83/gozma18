@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#== Variables ==
+#== Functionality ==
+#== Provisioning Script ==
+
 echo "mysql-server mysql-server/root_password password root@secret" | debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password root@secret" | debconf-set-selections
 
