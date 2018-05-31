@@ -1,63 +1,81 @@
 #!/usr/bin/env bash
 
-#== Variables ==
 #== Functionality ==
+
+database_install() {
+  local ROOT_PASS='root@secret'
+
+  echo "mysql-server mysql-server/root_password password ${ROOT_PASS}" | debconf-set-selections
+  echo "mysql-server mysql-server/root_password_again password ${ROOT_PASS}" | debconf-set-selections
+
+  apt-get install -y \
+    mysql-server \
+    postgresql postgresql-contrib \
+    sqlite3 libsqlite3-dev
+}
+
+database_mysql_setup() {
+  local ROOT_PASS='root@secret'
+
+  local USER_NAME='gozma18'
+  local USER_PASS='gozma18@secret'
+
+  local DATABASE='gozma18'
+  local DATABASE_TEST='gozma18_test'
+
+  # add mysql|user privileges
+  mysql --user="root" --password="${ROOT_PASS}" -e "CREATE USER '${USER_NAME}'@'localhost' IDENTIFIED BY '${USER_PASS}';"
+  mysql --user="root" --password="${ROOT_PASS}" -e "GRANT ALL ON *.* TO '${USER_NAME}'@'localhost' IDENTIFIED BY '${USER_PASS}' WITH GRANT OPTION;"
+  mysql --user="root" --password="${ROOT_PASS}" -e "GRANT ALL ON *.* TO '${USER_NAME}'@'%' IDENTIFIED BY '${USER_PASS}' WITH GRANT OPTION;"
+  mysql --user="root" --password="${ROOT_PASS}" -e "FLUSH PRIVILEGES;"
+
+  # create mysql databases
+  mysql --user="root" --password="${ROOT_PASS}" -e "CREATE DATABASE ${DATABASE} character set UTF8mb4 collate utf8mb4_bin;"
+  mysql --user="root" --password="${ROOT_PASS}" -e "CREATE DATABASE ${DATABASE_TEST} character set UTF8mb4 collate utf8mb4_bin;"
+}
+
+database_mysql_remote() {
+  sed -i '/^bind-address/s/bind-address.*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+}
+
+database_postgresql_setup() {
+  local USER_NAME='gozma18'
+  local USER_PASS='gozma18@secret'
+
+  local DATABASE='gozma18'
+  local DATABASE_TEST='gozma18_test'
+
+  # add postgres|user privileges
+  sudo -u postgres psql -c "CREATE ROLE ${USER_NAME} LOGIN PASSWORD '${USER_PASS}' SUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
+
+  # create postgres databases
+  sudo -u postgres /usr/bin/createdb --echo --owner=$USER_NAME $DATABASE
+  sudo -u postgres /usr/bin/createdb --echo --owner=$USER_NAME $DATABASE_TEST
+}
+
+database_postgresql_remote() {
+  sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/10/main/postgresql.conf
+  echo "host    all             all             192.168.27.1/32         md5" | tee -a /etc/postgresql/10/main/pg_hba.conf
+}
+
 #== Provisioning Script ==
 
-echo "mysql-server mysql-server/root_password password root@secret" | debconf-set-selections
-echo "mysql-server mysql-server/root_password_again password root@secret" | debconf-set-selections
+export DEBIAN_FRONTEND=noninteractive
 
 # Is MySQL installed?
-if [[ -f "/usr/bin/mysql" ]]; then
-  is_mysql_installed=true
+if [ ! -f "/usr/bin/mysql" ];
+then
+  database_install
+  database_mysql_setup
+  database_mysql_remote
 fi
 
 # Is PostgreSQL installed?
-if [[ -f "/usr/bin/psql" ]]; then
-    is_postgresql_installed=true
-fi
-
-# Install packages
-apt-get install -y \
-  mysql-server \
-  postgresql postgresql-contrib \
-  sqlite3 libsqlite3-dev
-
-# Enalbe MySQL remote access
-if [[ ! -v is_mysql_installed ]]; then
-  sed -i '/^bind-address/s/bind-address.*=.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
-  mysql --user="root" --password="root@secret" -e "GRANT ALL ON *.* TO root@'%' IDENTIFIED BY 'root@secret' WITH GRANT OPTION;"
-fi
-
-# Create MySQL privileges
-if [[ ! -v is_mysql_installed ]]; then
-  mysql --user="root" --password="root@secret" -e "CREATE USER 'gozma18'@'localhost' IDENTIFIED BY 'gozma18@secret';"
-  mysql --user="root" --password="root@secret" -e "GRANT ALL ON *.* TO 'gozma18'@'localhost' IDENTIFIED BY 'gozma18@secret' WITH GRANT OPTION;"
-  mysql --user="root" --password="root@secret" -e "GRANT ALL ON *.* TO 'gozma18'@'%' IDENTIFIED BY 'gozma18@secret' WITH GRANT OPTION;"
-  mysql --user="root" --password="root@secret" -e "FLUSH PRIVILEGES;"
-fi
-
-# Create MySQL databases
-if [[ ! -v is_mysql_installed ]]; then
-  mysql --user="root" --password="root@secret" -e "CREATE DATABASE gozma18 character set UTF8mb4 collate utf8mb4_bin;"
-  mysql --user="root" --password="root@secret" -e "CREATE DATABASE gozma18_test character set UTF8mb4 collate utf8mb4_bin;"
-fi
-
-# Enalbe PostgreSQL remote access
-if [[ ! -v is_postgresql_installed ]]; then
-  sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/10/main/postgresql.conf
-  echo "host    all             all             192.168.27.1/32         md5" | tee -a /etc/postgresql/10/main/pg_hba.conf
-fi
-
-# Create PostgreSQL privileges
-if [[ ! -v is_postgresql_installed ]]; then
-  sudo -u postgres psql -c "CREATE ROLE gozma18 LOGIN PASSWORD 'gozma18@secret' SUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
-fi
-
-# Create PostgreSQL databases
-if [[ ! -v is_mysql_installed ]]; then
-  sudo -u postgres /usr/bin/createdb --echo --owner=gozma18 gozma18
-  sudo -u postgres /usr/bin/createdb --echo --owner=gozma18 gozma18_test
+if [ ! -f "/usr/bin/psql" ];
+then
+  database_install
+  database_postgresql_setup
+  database_postgresql_remote
 fi
 
 # Restart services
