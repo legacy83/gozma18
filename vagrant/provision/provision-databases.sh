@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+#== Variables ==
+
+ls /usr/bin/mysql && IS_MYSQL_INSTALLED=$?
+ls /usr/bin/psql && IS_POSTGRESQL_INSTALLED=$?
+
 #== Functionality ==
 
 database_install() {
@@ -22,6 +27,9 @@ database_mysql_setup() {
 
   local DATABASE='gozma18'
   local DATABASE_TEST='gozma18_test'
+
+  # add mysql|root privileges
+  mysql --user="root" --password="${ROOT_PASS}" -e "GRANT ALL ON *.* TO 'root'@'%' IDENTIFIED BY '${ROOT_PASS}' WITH GRANT OPTION;"
 
   # add mysql|user privileges
   mysql --user="root" --password="${ROOT_PASS}" -e "CREATE USER '${USER_NAME}'@'localhost' IDENTIFIED BY '${USER_PASS}';"
@@ -62,16 +70,14 @@ database_postgresql_remote() {
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Is MySQL installed?
-if [ ! -f "/usr/bin/mysql" ];
+if [ ! $IS_MYSQL_INSTALLED ];
 then
   database_install
   database_mysql_setup
   database_mysql_remote
 fi
 
-# Is PostgreSQL installed?
-if [ ! -f "/usr/bin/psql" ];
+if [ ! $IS_POSTGRESQL_INSTALLED ];
 then
   database_install
   database_postgresql_setup
