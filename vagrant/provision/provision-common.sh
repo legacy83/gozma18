@@ -20,5 +20,6 @@ common_install() {
 #== Provisioning Script ==
 
 export DEBIAN_FRONTEND=noninteractive
+
 common_update
 common_install
