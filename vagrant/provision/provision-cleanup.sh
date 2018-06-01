@@ -2,8 +2,15 @@
 
 #== Variables ==
 #== Functionality ==
+
+cleanup() {
+  apt-get -y autoremove
+  apt-get -y clean
+  chown -R vagrant:vagrant /home/vagrant
+}
+
 #== Provisioning Script ==
 
-apt-get -y autoremove
-apt-get -y clean
-chown -R vagrant:vagrant /home/vagrant
+export DEBIAN_FRONTEND=noninteractive
+
+cleanup

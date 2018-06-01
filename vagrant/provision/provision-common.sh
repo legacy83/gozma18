@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+#== Variables ==
 #== Functionality ==
 
 common_update() {
