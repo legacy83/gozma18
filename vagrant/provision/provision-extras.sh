@@ -46,22 +46,7 @@ extras_ohmyzsh_install() {
 
 export DEBIAN_FRONTEND=noninteractive
 
-for EXTRA in $@;
-do
-
-  case $EXTRA in
-  'nodejs')
-    extras_nodejs_install
-    ;;
-  'composer')
-    extras_composer_install
-    ;;
-  'wp-cli')
-    extras_wpcli_install
-    ;;
-  'oh-my-zsh')
-    extras_ohmyzsh_install
-    ;;
-  esac
-
-done
+extras_nodejs_install
+extras_composer_install
+extras_wpcli_install
+extras_ohmyzsh_install
