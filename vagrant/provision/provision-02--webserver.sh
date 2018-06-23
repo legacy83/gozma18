@@ -37,9 +37,9 @@ webserver_setup() {
     CustomLog ${APACHE_LOG_DIR}/access.log combined
   </VirtualHost>" > /etc/apache2/sites-available/000-default.conf
 
-  # sed -i "s/memory_limit = .*/memory_limit = 256M/" /etc/php/7.0/apache2/php.ini
-  # sed -i "s/post_max_size = .*/post_max_size = 64M/" /etc/php/7.0/apache2/php.ini
-  # sed -i "s/upload_max_filesize = .*/upload_max_filesize = 32M/" /etc/php/7.0/apache2/php.ini
+  sed -i "s/memory_limit = .*/memory_limit = 256M/" /etc/php/7.2/apache2/php.ini
+  sed -i "s/post_max_size = .*/post_max_size = 64M/" /etc/php/7.2/apache2/php.ini
+  sed -i "s/upload_max_filesize = .*/upload_max_filesize = 32M/" /etc/php/7.2/apache2/php.ini
 
   a2enmod expires
   a2enmod headers
