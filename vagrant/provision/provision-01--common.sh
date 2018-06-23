@@ -15,7 +15,8 @@ common_install() {
     git-core subversion \
     ngrep wget unzip zip \
     whois vim mcrypt \
-    bash-completion zsh
+    bash-completion zsh \
+    htop curl vim
 }
 
 #== Provisioning Script ==
