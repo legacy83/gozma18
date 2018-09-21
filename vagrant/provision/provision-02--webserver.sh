@@ -20,7 +20,6 @@ webserver_install() {
 
 webserver_setup() {
   local DOMAIN='gozma18.local'
-  local APACHE_LOG_DIR='/var/log/apache2'
 
   echo "<VirtualHost *:80>
     ServerName ${DOMAIN}
@@ -33,8 +32,8 @@ webserver_setup() {
     	Allow from all
     	AllowOverride All
     </Directory>
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
   </VirtualHost>" > /etc/apache2/sites-available/000-default.conf
 
   sed -i "s/memory_limit = .*/memory_limit = 256M/" /etc/php/7.2/apache2/php.ini

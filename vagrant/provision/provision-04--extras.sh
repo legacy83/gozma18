@@ -11,7 +11,6 @@ extras_nodejs_install() {
     /usr/bin/npm install -g bower
     /usr/bin/npm install -g grunt-cli
     /usr/bin/npm install -g gulp-cli
-    /usr/bin/npm install -g webpack
   fi
 }
 
@@ -27,6 +26,24 @@ extras_wpcli_install() {
     curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
     chmod +x wp-cli.phar
     mv wp-cli.phar /usr/local/bin/wp
+  fi
+}
+
+extras_mailhog_install() {
+  if [ ! -f "/usr/local/bin/mailhog" ]; then
+    wget --quiet -O /usr/local/bin/mailhog \
+      https://github.com/mailhog/MailHog/releases/download/v1.0.0/MailHog_linux_amd64
+
+    chmod +x /usr/local/bin/mailhog
+  fi
+}
+
+extras_mhsendmail_install() {
+  if [ ! -f "/usr/local/bin/mhsendmail" ]; then
+    wget --quiet -O /usr/local/bin/mhsendmail \
+      https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64
+
+    chmod +x /usr/local/bin/mhsendmail
   fi
 }
 
@@ -46,4 +63,6 @@ export DEBIAN_FRONTEND=noninteractive
 extras_nodejs_install
 extras_composer_install
 extras_wpcli_install
+extras_mailhog_install
+extras_mhsendmail_install
 extras_ohmyzsh_install
